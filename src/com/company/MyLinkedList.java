@@ -6,6 +6,9 @@ public class MyLinkedList {
 
     // check index
 
+    // MUST CHANGE CODE TO ACCOUNT FOR INSTANCES WHERE 0 IS THE INDEX PROVIDED IN ARGUMENT
+    // ASK MR U TO CHANGE DUE DATE TO MON AT MIDNIGHT
+
     public boolean add(Object object) {
         if(object == null){
             return false;
@@ -35,8 +38,8 @@ public class MyLinkedList {
             head = newNode;
         }
         else if((head == null) && (index != 0)){
+            // is this what i should do in this case scenario
             System.out.println("There is no head, but you are asking to put an object in index after the head!");
-            return;
         }
         else {
             Node node = head;
@@ -188,7 +191,6 @@ public class MyLinkedList {
         }
 
         int currentFoundIndex = -1;
-
         int currentIndex = 0;
         Node currentNode = head;
         while(currentNode != null){
@@ -204,27 +206,134 @@ public class MyLinkedList {
     // return index of the last place it saw that object
 
 
-    public Object poll() { //Returns head element
-        return null;
+    public Object poll() { //Returns head element -- the old head element, right??, should it return the data of the head node or the node itself?
+        if(head == null){
+            return null;
+        }
+        Node oldHead = head;
+        head = head.getNextNode();
+        return oldHead;
     }
     // the second thing becomes the first IF there is a second element
+    // so otherwise does it just leave the head to be null???
 
     public Object pollLast() { //Returns tail element
+        // CHECK THIS ONE, should it return the data in the last node or the last node itself?
+        if(head == null){
+            return null;
+        }
+        Node currentNode = head;
+        // bc of short circuit evaluation, if the next node is null, it wont even try to call getNextNode on that null object -- in case the second object is null
+        while((currentNode.getNextNode() != null) && (currentNode.getNextNode().getNextNode() != null)){
+            currentNode = currentNode.getNextNode();
+        }
+        // this takes the finalNode out of the linked list but does not delete it in memory (java may auto garbage it tho), does this work?
+        Node finalNode = currentNode.getNextNode();
+        currentNode.setNextNode(null);
+        return finalNode;
+
+        /*
+        Node currentNode = head;
+        while(currentNode.getNextNode() != null){
+            currentNode = currentNode.getNextNode();
+        }
+
+        // this works, right? this actually deletes the last node, but could i just remove it from the linked list?
+        Node lastNode = currentNode;
+
+        // this would make lastNode null bc they refer to the same object
+        currentNode = null;
+        return lastNode;
+         */
+    }
+
+    // this method was in the rubric but not in here
+    // check this method
+    public Object remove(int index) {
+        // do you need to null the object or just pull it out of the linked list?
+
+        // MUST REDO: what if given index is 0
+        if(index < 0){
+            return null;
+        }
+        if(head == null){
+            return null;
+        }
+        int currentIndex = 0;
+        Node currentNode = head;
+        while((currentIndex < index - 1) && (currentNode.getNextNode() != null)){
+            currentNode = currentNode.getNextNode();
+            currentIndex++;
+        }
+        if(currentIndex == index - 1){
+            if(currentNode.getNextNode() != null){
+                // will still work if the node after the node at the index we want is null
+                currentNode.setNextNode(currentNode.getNextNode().getNextNode());
+            }
+            else if(currentNode.getNextNode() == null){
+                return null;
+            }
+        }
+        else if(currentNode.getNextNode() == null){
+            System.out.println("Invalid index provided.");
+            return null;
+        }
         return null;
     }
 
     public Object remove(Object object) {
+        // are we looking for the node itself or the info the node holds?
+        // removes the first instance right??
+        // check!!!
+        if(object == null){
+            return null;
+        }
+        if(head == null){
+            return null;
+        }
+        if(head == object){
+            return poll();
+        }
+
+        Node currentNode = head;
+        while(currentNode.getNextNode() != null){
+            // use == here not .equals() because comparing memory not necessairly content, right??
+            if(currentNode.getNextNode() == object){
+                Node returnNode = currentNode.getNextNode();
+                currentNode.setNextNode(currentNode.getNextNode().getNextNode());
+                return returnNode;
+            }
+        }
         return null;
     }
     // de-link the node and repair the link
     // want the object of the node itself to be returned // must use a get method
 
     public Object set(int index, Object object) { //Return value should be item being replaced
+        // return the node or the data held by the node?
+        // if the index given is beyond the length of the list, do we add null objects until the index wanted is reached or just return null???
+        // do we need to do sys.out.prints for every error (i.e. invalid index provided, head is null, etc)
+        if((object == null) || (index < 0)){
+            return null;
+        }
+        if(head == null){
+            return null;
+        }
+
+        Node currentNode = head;
+        int currentIndex = 0;
+
+
         return null;
     }
 
     public int size() {
         return 0;
+    }
+
+    // was on the rubric but not on here? still add?
+    public Object get(Object object){
+        return null;
     }
 
     // Node class must be in the class itself
