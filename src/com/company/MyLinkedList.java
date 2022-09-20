@@ -4,11 +4,6 @@ public class MyLinkedList {
 
     private Node head;
 
-    // check index
-
-    // MUST CHANGE CODE TO ACCOUNT FOR INSTANCES WHERE 0 IS THE INDEX PROVIDED IN ARGUMENT
-    // ASK MR U TO CHANGE DUE DATE TO MON AT MIDNIGHT
-
     public boolean add(Object object) {
         if(object == null){
             return false;
@@ -31,6 +26,7 @@ public class MyLinkedList {
     public void add(int index, Object object) {
         if ((object == null) || (index < 0)) {
             // if the passed through object is null, don't need to try to add a null object into the linked list
+            System.out.println("The head is null and/or the index provided is negative.");
             return;
         }
         Node newNode = new Node(object);
@@ -38,30 +34,37 @@ public class MyLinkedList {
             head = newNode;
         }
         else if((head == null) && (index != 0)){
-            // is this what i should do in this case scenario
-            System.out.println("There is no head, but you are asking to put an object in index after the head!");
+            System.out.println("The head is null, but the index provided is not 0.");
+            return;
         }
         else {
             Node node = head;
-            int count = 0;
-            while ((count < index - 1) && (node.getNextNode()!= null)) {
-                node = node.getNextNode();
-                count++;
+            int currentIndex = 0;
+            Node currentNode = head;
+            Node previousNode = null;
+            while((currentIndex < index) && (currentNode.getNextNode() != null)){
+                previousNode = currentNode;
+                currentNode = currentNode.getNextNode();
+                currentIndex++;
             }
-            if((count == index - 1) && (node.getNextNode()== null)){
-                node.setNextNode(newNode);
+            if((currentIndex == index) && (index == 0)){
+                newNode.setNextNode(head);
+                head = newNode;
             }
-            else if((count < index - 1) && (node.getNextNode()!= null)){
-                System.out.println("The index provided is not valid. It is too high.");
-                return;
+            else if(currentIndex == index){
+                previousNode.setNextNode(newNode);
+                newNode.setNextNode(currentNode);
             }
-            // now count = 1 less than index -- set next node for the new object to the current nextnode for the conut object, set next node for object at count to the new object
-            newNode.setNextNode(node.getNextNode());
-            node.setNextNode(newNode);
+            // will get here if currentNode is the last node of the list
+            else if(currentIndex == index - 1){
+                add(object);
+            }
+            // else, index provided is too high for the list, so nothing happens
+            else{
+                System.out.println("Index provided is too high!");
+            }
         }
     }
-
-
 
     public void addFirst(Object object) {
         if(object == null){
@@ -81,11 +84,12 @@ public class MyLinkedList {
         add(object);
     }
 
-    public void clear() { //Empties LL
-        // can you assume that all objects in the linked list are not null? otherwise, you can't call .getNextNode bc can't call a method on a null object
+    public void clear() {
+        //Empties LL
+        // yes - can you assume that all objects in the linked list are not null? otherwise, you can't call .getNextNode bc can't call a method on a null object
         head = null;
-        // check!
-        /*
+
+        /* Previous attempt
         Node currentNode = head;
         Node nextNode = currentNode;
         while(currentNode.getNextNode() != null){
@@ -93,12 +97,10 @@ public class MyLinkedList {
             currentNode = null;
         }
         currentNode = null;
-
          */
     }
 
     public boolean contains(Object object) {
-        // is this what you mean by assessing by content instead of memory?
         if(object == null){
             return false;
         }
@@ -107,7 +109,7 @@ public class MyLinkedList {
         }
         Node currentNode = head;
         while(currentNode != null){
-            // so if we cannot assess by memory value, then we have to use .equals right bc == compares memory locations?
+            // yes - so if we cannot assess by memory value, then we have to use .equals right bc == compares memory locations?
             if(currentNode.getData().equals(object)){
                 return true;
             }
@@ -117,7 +119,7 @@ public class MyLinkedList {
     }
 
     public Object get(int index){
-        // do you return the node itself or the data/object the node holds?
+        // doesn't matter - do you return the node itself or the data/object the node holds?
         if(index < 0){
             return null;
         }
@@ -160,18 +162,17 @@ public class MyLinkedList {
         // the object's "content" refers to the data instance variable not the node object itsef, right?
 
         if(object == null){
-            System.out.println("The object provided is null.");
+            // is it ok if sys.out.prints are inconsistently provided?
             return -1;
         }
         if(head == null){
-            // do we need to find explanations for every check?
             return -1;
         }
         int currentIndex = 0;
         Node currentNode = head;
         while(currentNode != null){
             // use == here right? bc it does not specify to not compare memory locations
-            if(currentNode.getData() == object){
+            if(currentNode.getData().equals(object)){
                 return currentIndex;
             }
             currentIndex++;
@@ -195,7 +196,7 @@ public class MyLinkedList {
         Node currentNode = head;
         while(currentNode != null){
             // use == here right? bc it does not specify to not compare memory locations
-            if(currentNode.getData() == object){
+            if(currentNode.getData().equals(object)){
                 currentFoundIndex = currentIndex;
             }
             currentIndex++;
@@ -218,7 +219,6 @@ public class MyLinkedList {
     // so otherwise does it just leave the head to be null???
 
     public Object pollLast() { //Returns tail element
-        // CHECK THIS ONE, should it return the data in the last node or the last node itself?
         if(head == null){
             return null;
         }
@@ -227,32 +227,22 @@ public class MyLinkedList {
         while((currentNode.getNextNode() != null) && (currentNode.getNextNode().getNextNode() != null)){
             currentNode = currentNode.getNextNode();
         }
+        // this will happen when the node after the head is null
+        if(currentNode.getNextNode() == null){
+            Node lastNode = head;
+            head = null;
+            return lastNode;
+        }
         // this takes the finalNode out of the linked list but does not delete it in memory (java may auto garbage it tho), does this work?
         Node finalNode = currentNode.getNextNode();
         currentNode.setNextNode(null);
         return finalNode;
-
-        /*
-        Node currentNode = head;
-        while(currentNode.getNextNode() != null){
-            currentNode = currentNode.getNextNode();
-        }
-
-        // this works, right? this actually deletes the last node, but could i just remove it from the linked list?
-        Node lastNode = currentNode;
-
-        // this would make lastNode null bc they refer to the same object
-        currentNode = null;
-        return lastNode;
-         */
     }
 
     // this method was in the rubric but not in here
-    // check this method
     public Object remove(int index) {
-        // do you need to null the object or just pull it out of the linked list?
+        // just pull out - do you need to null the object or just pull it out of the linked list?
 
-        // MUST REDO: what if given index is 0
         if(index < 0){
             return null;
         }
@@ -261,82 +251,147 @@ public class MyLinkedList {
         }
         int currentIndex = 0;
         Node currentNode = head;
-        while((currentIndex < index - 1) && (currentNode.getNextNode() != null)){
+        Node previousNode = null;
+
+        while((currentIndex < index) && (currentNode.getNextNode() != null)){
+            previousNode = currentNode;
             currentNode = currentNode.getNextNode();
             currentIndex++;
         }
-        if(currentIndex == index - 1){
-            if(currentNode.getNextNode() != null){
-                // will still work if the node after the node at the index we want is null
-                currentNode.setNextNode(currentNode.getNextNode().getNextNode());
-            }
-            else if(currentNode.getNextNode() == null){
-                return null;
-            }
+        if((currentIndex == index) && (index == 0)){
+            head = currentNode.getNextNode();
+            return currentNode;
         }
-        else if(currentNode.getNextNode() == null){
-            System.out.println("Invalid index provided.");
+        // still works if want to get node at last index
+        else if(currentIndex == index){
+            // this makes it so that the previous node now points to the node after currentNode (removes currentNode from the linked list, but currentNode still exists in memory)
+            previousNode.setNextNode(currentNode.getNextNode());
+            return currentNode;
+        }
+        // will get here if currentNode is the last node of the list
+        else{
+            System.out.println("Index provided is too high!");
             return null;
         }
-        return null;
     }
 
     public Object remove(Object object) {
-        // are we looking for the node itself or the info the node holds?
         // removes the first instance right??
-        // check!!!
         if(object == null){
             return null;
         }
         if(head == null){
             return null;
         }
-        if(head == object){
-            return poll();
+        // if the head holds the object
+        if(head.getData().equals(object)){
+            Node node = head;
+            head = head.getNextNode();
+            return node;
         }
-
         Node currentNode = head;
-        while(currentNode.getNextNode() != null){
-            // use == here not .equals() because comparing memory not necessairly content, right??
-            if(currentNode.getNextNode() == object){
-                Node returnNode = currentNode.getNextNode();
-                currentNode.setNextNode(currentNode.getNextNode().getNextNode());
-                return returnNode;
+        Node previousNode = null;
+
+        // wont evaluate if the object is at the head
+        while(currentNode != null){
+            if(currentNode.getData().equals(object)){
+                previousNode.setNextNode(currentNode.getNextNode());
+                return currentNode;
             }
+            previousNode = currentNode;
+            currentNode = currentNode.getNextNode();
         }
+        System.out.println("Object not found in linked list.");
         return null;
     }
     // de-link the node and repair the link
     // want the object of the node itself to be returned // must use a get method
 
-    public Object set(int index, Object object) { //Return value should be item being replaced
-        // return the node or the data held by the node?
-        // if the index given is beyond the length of the list, do we add null objects until the index wanted is reached or just return null???
-        // do we need to do sys.out.prints for every error (i.e. invalid index provided, head is null, etc)
-        if((object == null) || (index < 0)){
+    public Object set(int index, Object object) {
+        //Return value should be item being replaced
+        // doesn't matter - return the node or the data held by the node?
+        // no - if the index given is beyond the length of the list, do we add null objects until the index wanted is reached or just return null???
+        // no - do we need to do sys.out.prints for every error (i.e. invalid index provided, head is null, etc)
+        if(index < 0){
+            System.out.println("Negative index provided.");
             return null;
         }
         if(head == null){
             return null;
         }
 
-        Node currentNode = head;
+        Node newNode = new Node(object);
+
         int currentIndex = 0;
+        Node currentNode = head;
+        Node previousNode = null;
 
-
-        return null;
+        while((currentIndex < index) && (currentNode.getNextNode() != null)){
+            previousNode = currentNode;
+            currentNode = currentNode.getNextNode();
+            currentIndex++;
+        }
+        if((currentIndex == index) && (index == 0)){
+            head = newNode;
+            head.setNextNode(currentNode.getNextNode());
+            return currentNode;
+        }
+        // still works if want to replace node at last index
+        else if(currentIndex == index){
+            // this makes it so that the previous node now points to the node after currentNode (removes currentNode from the linked list, but currentNode still exists in memory)
+            previousNode.setNextNode(newNode);
+            return currentNode;
+        }
+        else{
+            System.out.println("Index provided is too high!");
+            return null;
+        }
     }
 
     public int size() {
-        return 0;
+        if(head == null){
+            return 0;
+        }
+        int numObjects = 0;
+        Node currentNode = head;
+        while(currentNode != null){
+            numObjects++;
+            currentNode = currentNode.getNextNode();
+        }
+        return numObjects;
     }
 
-    // was on the rubric but not on here? still add?
     public Object get(Object object){
+        if(object == null){
+            return null;
+        }
+        if(head == null) {
+            return null;
+        }
+        Node currentNode = head;
+        while(currentNode != null){
+            if(currentNode.getData().equals(object)){
+                return currentNode;
+            }
+            currentNode = currentNode.getNextNode();
+        }
+        System.out.println("A node in the linked list does not contain the object provided.");
         return null;
     }
 
-    // Node class must be in the class itself
+
+    // extra method for me to test my code
+    public void print(){
+        Node currentNode = head;
+        int index = 0;
+        while(currentNode != null){
+            System.out.println(currentNode.getData().toString() + " - " + index);
+            currentNode = currentNode.getNextNode();
+            index++;
+        }
+    }
+
+    // Node class must be in the Linked List itself
     public class Node {
         private Object data;
         private Node nextNode;
