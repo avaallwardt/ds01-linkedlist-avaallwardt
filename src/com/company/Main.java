@@ -9,7 +9,13 @@ public class Main {
            linkedList.add(1);
         }
 
+         linkedList.set(2, 4);
+        linkedList.print();
+
+
     }
+
+
 
 
 

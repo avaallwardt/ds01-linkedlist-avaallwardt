@@ -3,6 +3,17 @@ package com.company;
 public class MyLinkedList {
 
     private Node head;
+    private boolean isDoubly;
+    private boolean isCircly;
+    private Node tail;
+
+    /*
+    public MyLinkedList(boolean isDoubly, boolean isCircly){
+        this.isDoubly = isDoubly;
+        this.isCircly = isCircly;
+    }
+
+     */
 
     public boolean add(Object object) {
         if(object == null){
@@ -339,7 +350,9 @@ public class MyLinkedList {
         // still works if want to replace node at last index
         else if(currentIndex == index){
             // this makes it so that the previous node now points to the node after currentNode (removes currentNode from the linked list, but currentNode still exists in memory)
+            Node nextNode = currentNode.getNextNode();
             previousNode.setNextNode(newNode);
+            newNode.setNextNode(nextNode);
             return currentNode;
         }
         else{
