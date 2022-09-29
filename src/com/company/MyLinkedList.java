@@ -10,6 +10,9 @@ public class MyLinkedList {
     private Node tail;
 
 
+    // SHOULD I ALSO HAVE A CONSTRUCTOR FOR A NORMAL LINKED LIST (like the auto-generated constructur from pt 1)
+    // previousNode can only be used with doubly LLs!!!
+
     public MyLinkedList(boolean isDoubly, boolean isCircly){
         this.isDoubly = isDoubly;
         this.isCircly = isCircly;
@@ -44,7 +47,7 @@ public class MyLinkedList {
         return true;
     }
 
-    //done
+    //NEED TO UPDATE IT -- see comments!
     public void add(int index, Object object) {
         if ((object == null) || (index < 0)) {
             // if the passed through object is null, don't need to try to add a null object into the linked list
@@ -81,6 +84,7 @@ public class MyLinkedList {
                     tail.setNextNode(head);
                 }
             }
+            // NOOOO! it could be circly and keep going through the list until it finds the index and the object matching it! oh no!
             else if(currentIndex == index){
                 previousNode.setNextNode(newNode);
                 newNode.setNextNode(currentNode);
@@ -289,25 +293,60 @@ public class MyLinkedList {
     // return index of the last place it saw that object
 
 
+    // done -- need to check with all test cases
     public Object poll() { //Returns head element -- the old head element, right??, should it return the data of the head node or the node itself?
         if(head == null){
             return null;
         }
         Node oldHead = head;
         head = head.getNextNode();
+        if(isDoubly){
+            head.setPreviousNode(null);
+        }
+        if(isCircly){
+            tail.setNextNode(head);
+        }
+        if(isDoubly && isCircly){
+            head.setPreviousNode(tail);
+        }
         return oldHead;
     }
     // the second thing becomes the first IF there is a second element
     // so otherwise does it just leave the head to be null???
 
+    //done
     public Object pollLast() { //Returns tail element
         if(head == null){
             return null;
         }
+     //isCircly is taken care of later in the method
+        if(isDoubly){
+            Node theTail = tail;
+            tail = tail.getPreviousNode();
+            tail.setNextNode(null);
+            return theTail;
+        }
+        if(isCircly && isDoubly){
+            Node theTail = tail;
+            tail = tail.getPreviousNode();
+            tail.setNextNode(head);
+            head.setPreviousNode(tail);
+            return theTail;
+        }
+
         Node currentNode = head;
         // bc of short circuit evaluation, if the next node is null, it wont even try to call getNextNode on that null object -- in case the second object is null
         while((currentNode.getNextNode() != null) && (currentNode.getNextNode().getNextNode() != null)){
             currentNode = currentNode.getNextNode();
+            if(isCircly){
+                // otherwise circly would be an infinite loop
+                if(currentNode.getNextNode() == tail){
+                    Node tailNode = tail;
+                    tail = currentNode;
+                    tail.setNextNode(head);
+                    return tailNode;
+                }
+            }
         }
         // this will happen when the node after the head is null
         if(currentNode.getNextNode() == null){
@@ -331,6 +370,7 @@ public class MyLinkedList {
         if(head == null){
             return null;
         }
+
         int currentIndex = 0;
         Node currentNode = head;
         Node previousNode = null;
@@ -339,6 +379,21 @@ public class MyLinkedList {
             previousNode = currentNode;
             currentNode = currentNode.getNextNode();
             currentIndex++;
+            /*
+            if(isCircly){
+                if((currentNode == tail) && (currentIndex == index)){
+                    Node theTail = tail;
+                    tail = previousNode;
+                    tail.setNextNode(head);
+                    return theTail;
+                }
+                else if(currentNode == tail){
+
+                }
+            }
+
+             */
+
         }
         if((currentIndex == index) && (index == 0)){
             head = currentNode.getNextNode();
