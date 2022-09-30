@@ -6,30 +6,71 @@ public class MyLinkedList {
     private boolean isDoubly;
     private boolean isCircly;
 
+    public Node getHead() {
+        return head;
+    }
+
+    public void setHead(Node head) {
+        this.head = head;
+    }
+
+    public boolean isDoubly() {
+        return isDoubly;
+    }
+
+    public void setDoubly(boolean doubly) {
+        isDoubly = doubly;
+    }
+
+    public boolean isCircly() {
+        return isCircly;
+    }
+
+    public void setCircly(boolean circly) {
+        isCircly = circly;
+    }
+
+    public Node getTail() {
+        return tail;
+    }
+
+    public void setTail(Node tail) {
+        this.tail = tail;
+    }
+
     // always use tail, but it is most important for circly
     private Node tail;
 
 
     // SHOULD I ALSO HAVE A CONSTRUCTOR FOR A NORMAL LINKED LIST (like the auto-generated constructur from pt 1)
     // previousNode can only be used with doubly LLs!!!
-    // if a circly only has one node, does previous and next node just both point to itself???
+    // if a circly only has one node, does previous and next node just both point to itself??? -- yes
 
     public MyLinkedList(boolean isDoubly, boolean isCircly){
         this.isDoubly = isDoubly;
         this.isCircly = isCircly;
     }
 
+    public MyLinkedList(){
+
+    }
+
 
     //done
     public boolean add(Object object) {
         if(object == null){
+            System.out.println("The object provided is null.");
             return false;
         }
         Node newNode = new Node(object);
+        boolean atEnd = false;
         if(head != null){
             Node node = head;
-            while(node.getNextNode() != null){
+            while(node.getNextNode() != null && atEnd == false){
                 node = node.getNextNode();
+                if(node == tail){
+                    atEnd = true;
+                }
             }
             node.setNextNode(newNode);
             tail = newNode;
@@ -39,10 +80,23 @@ public class MyLinkedList {
             if(isCircly){
                 newNode.setNextNode(head);
             }
+            if(isCircly && isDoubly){
+                head.setPreviousNode(newNode);
+            }
         }
         else{
             head = newNode;
             tail = newNode;
+            if(isCircly){
+                head.setNextNode(tail);
+                tail.setNextNode(head);
+            }
+            if(isCircly && isDoubly){
+                head.setNextNode(tail);
+                tail.setNextNode(head);
+                head.setPreviousNode(tail);
+                tail.setPreviousNode(head);
+            }
         }
         // if you had a size limit, it would return false
         return true;
@@ -59,6 +113,16 @@ public class MyLinkedList {
         if ((head == null) && (index == 0)) {
             head = newNode;
             tail = newNode;
+            if(isCircly){
+                head.setNextNode(tail);
+                tail.setNextNode(head);
+            }
+            if(isCircly && isDoubly){
+                head.setNextNode(tail);
+                tail.setNextNode(head);
+                head.setPreviousNode(tail);
+                tail.setPreviousNode(head);
+            }
         }
         else if((head == null) && (index != 0)){
             System.out.println("The head is null, but the index provided is not 0.");
@@ -69,10 +133,14 @@ public class MyLinkedList {
             int currentIndex = 0;
             Node currentNode = head;
             Node previousNode = null;
-            while((currentIndex < index) && (currentNode.getNextNode() != null)){
+            boolean atEnd = false;
+            while((currentIndex < index) && (currentNode.getNextNode() != null) && atEnd == false){
                 previousNode = currentNode;
                 currentNode = currentNode.getNextNode();
                 currentIndex++;
+                if(currentNode == tail){
+                    atEnd = true;
+                }
             }
             if((currentIndex == index) && (index == 0)){
                 newNode.setNextNode(head);
@@ -123,6 +191,9 @@ public class MyLinkedList {
             }
             if(isCircly){
                 tail.setNextNode(newNode);
+            }
+            if(isCircly && isDoubly){
+                newNode.setPreviousNode(tail);
             }
             head = newNode;
         }
@@ -654,10 +725,18 @@ public class MyLinkedList {
         Node currentNode = head;
         int index = 0;
         while(currentNode != null){
-            System.out.println(currentNode.getData().toString() + " - " + index);
+            System.out.print(currentNode.getData().toString() + " - " + index);
+            if(currentNode == head){
+                System.out.print(" - head");
+            }
             if(currentNode == tail){
+                System.out.print(" - tail");
+            }
+            if(currentNode == tail){
+                System.out.println();
                 return;
             }
+            System.out.println();
             currentNode = currentNode.getNextNode();
             index++;
         }
