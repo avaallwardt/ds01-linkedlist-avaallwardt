@@ -1,10 +1,12 @@
 package com.company;
 
+import java.sql.SQLOutput;
+
 public class Main {
 
     public static void main(String[] args){
 
-        MyLinkedList linkedList = new MyLinkedList(false, true);
+        MyLinkedList linkedList = new MyLinkedList(false, false);
 
         int num = 0;
         for(int i = 0; i < 10; i++) {
@@ -16,14 +18,16 @@ public class Main {
 
         linkedList.add(5);
         linkedList.add(6);
-        linkedList.remove(1);
+        /*
+        System.out.println(linkedList.getFirst());
 
         System.out.println("head: " + linkedList.getHead());
         System.out.println("tail: " + linkedList.getTail());
 
-        System.out.println(linkedList.floydAlgorithm());
+        linkedList.pollLast();
+        //System.out.println(linkedList.getTail().getPreviousNode().getData());
 
-        /*
+
         linkedList.print();
 
 

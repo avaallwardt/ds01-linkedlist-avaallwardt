@@ -102,7 +102,7 @@ public class MyLinkedList {
         return true;
     }
 
-    //DONE -- CHECK AGAIN
+    //DONE
     public void add(int index, Object object) {
         if ((object == null) || (index < 0)) {
             // if the passed through object is null, don't need to try to add a null object into the linked list
@@ -365,7 +365,7 @@ public class MyLinkedList {
     // return index of the last place it saw that object
 
 
-    //DONE (maybe check again though) // done -- need to check with all test cases
+    //DONE  // done -- need to check with all test cases
     public Object poll() { //Returns head element -- the old head element, right??, should it return the data of the head node or the node itself?
         if(head == null){
             return null;
@@ -392,7 +392,7 @@ public class MyLinkedList {
     // the second thing becomes the first IF there is a second element
     // so otherwise does it just leave the head to be null???
 
-    //DONE (maybe check again though)//done
+    //DONE //done
     public Object pollLast() { //Returns tail element
         if(head == null){
             return null;
