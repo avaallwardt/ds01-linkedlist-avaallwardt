@@ -2,28 +2,48 @@ package com.company;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args){
 
-        MyLinkedList singlyLinkedList = new MyLinkedList();
         MyLinkedList linkedList = new MyLinkedList(false, true);
 
-
-
-        for(int i = 0; i < 10; i++){
-          linkedList.add(1);
+        int num = 0;
+        for(int i = 0; i < 10; i++) {
+            linkedList.add(1);
+            System.out.println(num + ": " + linkedList.getLast());
+            num++;
         }
 
 
+        linkedList.add(5);
+        linkedList.add(6);
+        linkedList.remove(1);
 
-        linkedList.addFirst(5);
+        System.out.println("head: " + linkedList.getHead());
+        System.out.println("tail: " + linkedList.getTail());
+
+        System.out.println(linkedList.floydAlgorithm());
+
+        /*
         linkedList.print();
 
 
-        //linkedList.add(1);
-        System.out.println(linkedList.getHead());
+        System.out.println("head: " + linkedList.getHead());
+        System.out.println("tail: " + linkedList.getTail());
+
         //System.out.println(linkedList.getHead().getNextNode());
+        System.out.println("head previous node: " + linkedList.getHead().getPreviousNode());
+        System.out.println("tail next node: " + linkedList.getTail().getNextNode());
+        System.out.println("tail previous node: " + linkedList.getTail().getPreviousNode());
+        System.out.println("2nd node previous node: " + linkedList.getHead().getNextNode().getPreviousNode());
+        //System.out.println("node the 2nd to last is pointing to " + linkedList.getTail().getPreviousNode().getNextNode());
+
         System.out.println();
-        System.out.println(linkedList.getHead().getPreviousNode());
+        MyLinkedList.Node index4 = (MyLinkedList.Node) (linkedList.get(4));
+        System.out.println(index4.getNextNode());
+        System.out.println(index4.getNextNode().getPreviousNode());
+
+         */
+
 
         /*
         MyLinkedList.Node node = (MyLinkedList.Node) (linkedList.get(10));

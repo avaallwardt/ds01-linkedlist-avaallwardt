@@ -102,7 +102,7 @@ public class MyLinkedList {
         return true;
     }
 
-    //NEED TO UPDATE IT -- see comments!
+    //DONE -- CHECK AGAIN
     public void add(int index, Object object) {
         if ((object == null) || (index < 0)) {
             // if the passed through object is null, don't need to try to add a null object into the linked list
@@ -174,7 +174,7 @@ public class MyLinkedList {
         }
     }
 
-//done
+//DONE //done
     public void addFirst(Object object) {
         if(object == null){
             return;
@@ -199,12 +199,12 @@ public class MyLinkedList {
         }
     }
 
-    //done
+    //DONE //done
     public void addLast(Object object) { //Identical to add but with a void return type
         add(object);
     }
 
-    //done
+    //DONE //done
     public void clear() {
         //Empties LL
         // yes - can you assume that all objects in the linked list are not null? otherwise, you can't call .getNextNode bc can't call a method on a null object
@@ -224,7 +224,7 @@ public class MyLinkedList {
          */
     }
 
-    //done - must consider that a circly would result in an infinite loop
+    //DONE //done - must consider that a circly would result in an infinite loop
     public boolean contains(Object object) {
         if(object == null){
             return false;
@@ -247,7 +247,7 @@ public class MyLinkedList {
         return false;
     }
 
-    //done - must consider that a circly would result in an infinite loop
+    //DONE //done - must consider that a circly would result in an infinite loop
     public Object get(int index){
         // doesn't matter - do you return the node itself or the data/object the node holds?
         if(index < 0){
@@ -272,7 +272,7 @@ public class MyLinkedList {
         return null;
     }
 
-    //done - doesn't change because the method doesn't alter the list
+    //DONE //done - doesn't change because the method doesn't alter the list or go through it (no chance of infinite loop)
     public Object getFirst() {
         if(head == null){
             return null;
@@ -282,7 +282,7 @@ public class MyLinkedList {
         }
     }
 
-    //done - just returned tail instead but kept o.g. method in the comments
+    //DONE //done - just returned tail instead but kept o.g. method in the comments
     public Object getLast() {
         return tail;
         /*
@@ -302,7 +302,7 @@ public class MyLinkedList {
          */
     }
 
-    //done
+    //DONE //done
     public int indexOf(Object object) {
         // the object's "content" refers to the data instance variable not the node object itsef, right?
 
@@ -333,7 +333,7 @@ public class MyLinkedList {
     // first index that of that object that it finds
     // -1 if the object doesn't exist in the linked list
 
-    //done
+    //DONE //done
     public int lastIndexOf(Object object) {
         if(object == null){
             return -1;
@@ -365,10 +365,16 @@ public class MyLinkedList {
     // return index of the last place it saw that object
 
 
-    // done -- need to check with all test cases
+    //DONE (maybe check again though) // done -- need to check with all test cases
     public Object poll() { //Returns head element -- the old head element, right??, should it return the data of the head node or the node itself?
         if(head == null){
             return null;
+        }
+        if(head == tail){
+            Node prevHead = head;
+            head = null;
+            tail = null;
+            return prevHead;
         }
         Node oldHead = head;
         head = head.getNextNode();
@@ -386,23 +392,43 @@ public class MyLinkedList {
     // the second thing becomes the first IF there is a second element
     // so otherwise does it just leave the head to be null???
 
-    //done
+    //DONE (maybe check again though)//done
     public Object pollLast() { //Returns tail element
         if(head == null){
             return null;
         }
-     //isCircly is taken care of later in the method
-        if(isDoubly){
-            Node theTail = tail;
-            tail = tail.getPreviousNode();
-            tail.setNextNode(null);
-            return theTail;
+        if(head == tail){
+            Node prevTail = tail;
+            head = null;
+            tail = null;
+            return prevTail;
         }
+        /*
+        Node prevTail = tail;
+        if(isCircly && isDoubly){
+           tail.getPreviousNode().setNextNode(head);
+           head.setPreviousNode(tail.getPreviousNode());
+           return prevTail;
+        }
+        if(isCircly){
+
+        }
+
+         */
+
+
+     //isCircly is taken care of later in the method
         if(isCircly && isDoubly){
             Node theTail = tail;
             tail = tail.getPreviousNode();
             tail.setNextNode(head);
             head.setPreviousNode(tail);
+            return theTail;
+        }
+        if(isDoubly){
+            Node theTail = tail;
+            tail = tail.getPreviousNode();
+            tail.setNextNode(null);
             return theTail;
         }
 
@@ -424,11 +450,13 @@ public class MyLinkedList {
         if(currentNode.getNextNode() == null){
             Node lastNode = head;
             head = null;
+            tail = null;
             return lastNode;
         }
         // this takes the finalNode out of the linked list but does not delete it in memory (java may auto garbage it tho), does this work?
         Node finalNode = currentNode.getNextNode();
         currentNode.setNextNode(null);
+        tail = currentNode;
         return finalNode;
     }
 
@@ -445,9 +473,7 @@ public class MyLinkedList {
         if(head == null){
             return null;
         }
-        if(isDoubly){
 
-        }
         int currentIndex = 0;
         Node currentNode = head;
         Node previousNode = null;
@@ -468,6 +494,16 @@ public class MyLinkedList {
         // need to check
         if((currentIndex == index) && (index == 0)){
             head = currentNode.getNextNode();
+            // deletes the linked list if it is circly and only contains one item (bc the next node would just be null
+            if(head == null){
+                tail = null;
+            }
+            if(isCircly){
+                if(head == currentNode){
+                    head = null;
+                    tail = null;
+                }
+            }
             if(head != null){
                 if(isCircly){
                     tail.setNextNode(head);
@@ -476,9 +512,12 @@ public class MyLinkedList {
                     if(head.getNextNode() != null){
                         head.getNextNode().setPreviousNode(head);
                     }
+                    head.setPreviousNode(null);
+                }
+                if(isCircly && isDoubly){
+                    head.setPreviousNode(tail);
                 }
             }
-
             return currentNode;
         }
         // still works if want to get node at last index
@@ -486,6 +525,16 @@ public class MyLinkedList {
             // this makes it so that the previous node now points to the node after currentNode (removes currentNode from the linked list, but currentNode still exists in memory)
             // already works for circly
             previousNode.setNextNode(currentNode.getNextNode());
+            if(currentNode == tail){
+                tail = previousNode;
+                if(isDoubly && isCircly){
+                    previousNode.setNextNode(head);
+                    head.setPreviousNode(tail);
+                }
+                if(isCircly){
+                    previousNode.setNextNode(head);
+                }
+            }
             if(isDoubly){
                 if(currentNode.getNextNode() != null){
                     currentNode.getNextNode().setPreviousNode(previousNode);
@@ -501,6 +550,7 @@ public class MyLinkedList {
     }
 
       /*
+      part of a method i wrote previously. please ignore it.
             if(isCircly){
                 if((currentNode == tail) && (currentIndex == index)){
                     Node theTail = tail;
@@ -512,10 +562,9 @@ public class MyLinkedList {
 
                 }
             }
-
              */
 
-    //done
+    //DONE //done
     public Object remove(Object object) {
         // removes the first instance right??
         if(object == null){
@@ -528,6 +577,15 @@ public class MyLinkedList {
         if(head.getData().equals(object)){
             Node node = head;
             head = head.getNextNode();
+            if(head == null){
+                tail = null;
+                return node;
+            }
+            if(head == node){
+                head = null;
+                tail = null;
+                return node;
+            }
             if(isCircly){
                 tail.setNextNode(head);
             }
@@ -535,6 +593,7 @@ public class MyLinkedList {
                if(head.getNextNode() != null){
                    head.getNextNode().setPreviousNode(head);
                }
+               head.setPreviousNode(null);
             }
             if(isDoubly && isCircly){
                 head.setPreviousNode(tail);
@@ -549,7 +608,6 @@ public class MyLinkedList {
         while(currentNode != null){
             if(currentNode.getData().equals(object)){
                 previousNode.setNextNode(currentNode.getNextNode());
-                //already works for circly
 
                 if(isDoubly){
                     if(currentNode.getNextNode() != null){
@@ -581,7 +639,7 @@ public class MyLinkedList {
     // de-link the node and repair the link
     // want the object of the node itself to be returned // must use a get method
 
-    //done
+    //DONE //done
     public Object set(int index, Object object) {
         //Return value should be item being replaced
         // doesn't matter - return the node or the data held by the node?
@@ -612,6 +670,17 @@ public class MyLinkedList {
             currentIndex++;
         }
         if((currentIndex == index) && (index == 0)){
+            if(head == tail && isCircly){
+                head = newNode;
+                tail = newNode;
+                head.setNextNode(tail);
+                tail.setNextNode(head);
+                if(isDoubly){
+                    head.setPreviousNode(tail);
+                    tail.setPreviousNode(head);
+                }
+                return currentNode;
+            }
             head = newNode;
             head.setNextNode(currentNode.getNextNode());
             if(isCircly){
@@ -656,7 +725,7 @@ public class MyLinkedList {
         }
     }
 
-    //done
+    //DONE //done
     public int size() {
         if(head == null){
             return 0;
@@ -710,9 +779,12 @@ public class MyLinkedList {
             if(harePointer == tortoisePointer){
                 return true;
             }
-            if((tortoisePointer != null) && (harePointer.getNextNode() != null)){
+            if(harePointer.getNextNode() != null){
                 harePointer = harePointer.getNextNode().getNextNode();
                 tortoisePointer = tortoisePointer.getNextNode();
+            }
+            else{
+                return false;
             }
         }
         return false;
